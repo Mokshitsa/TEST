@@ -3,91 +3,82 @@ import pandas as pd
 import numpy as np
 from PIL import Image
 import time
+import hashlib
 
-# Custom CSS for styling
-st.markdown("""
-    <style>
-    .main {
-        background-color: #f9f9f9;
-    }
-    .title {
-        font-size: 36px;
-        font-weight: bold;
-        color: #2C3E50;
-        text-align: center;
-    }
-    .subtitle {
-        font-size: 24px;
-        font-weight: bold;
-        color: #34495E;
-        text-align: center;
-    }
-    .footer {
-        font-size: 14px;
-        color: #95A5A6;
-        text-align: center;
-        margin-top: 20px;
-    }
-    </style>
-""", unsafe_allow_html=True)
+# --- Helper Functions ---
+def hash_data(data):
+    """Hash data using SHA-256 for blockchain-like storage."""
+    return hashlib.sha256(data.encode()).hexdigest()
 
-# App Title
-st.markdown('<p class="title">SurgiSim XR: Surgical Simulation Redefined</p>', unsafe_allow_html=True)
+def analyze_patient_data(file):
+    """Simulate AI-powered analysis of patient data."""
+    time.sleep(3)
+    return f"Recommended Approach: Perform minimally invasive technique based on the uploaded {file.name}."
 
-# Sidebar Navigation
-st.sidebar.title("Navigation")
-page = st.sidebar.radio("Go to", ["Home", "Surgical Training", "Preoperative Planning", "About"])
+def generate_3d_model(file):
+    """Simulate the generation of a 3D model."""
+    time.sleep(2)
+    return "3D Model Generated Successfully!"
+
+# --- App Layout ---
+st.set_page_config(page_title="Surgical Assistant", layout="wide")
+
+# Sidebar for Navigation
+st.sidebar.title("Surgical Assistant")
+page = st.sidebar.radio("Navigate", ["Home", "Training", "Preoperative Planning", "Patient Data", "About"])
 
 # Home Page
 if page == "Home":
-    st.markdown('<p class="subtitle">Welcome to SurgiSim XR</p>', unsafe_allow_html=True)
-    st.write("""
-    **SurgiSim XR** is a cutting-edge platform designed for medical professionals to enhance their surgical skills through 
-    immersive and interactive mixed-reality simulations. Whether you're a medical student, a resident, or a practicing surgeon, 
-    SurgiSim XR empowers you to learn, plan, and excel.
-    """)
-    # Add an interactive 3D visualization placeholder
-    st.image("https://via.placeholder.com/800x400?text=3D+Surgical+Simulation", caption="Experience Futuristic Simulations")
+    st.title("Welcome to the Surgical Assistant")
+    st.write("Revolutionizing surgery with AI, blockchain, and precision tools.")
+    st.image("https://via.placeholder.com/800x400?text=Surgical+Assistant+Platform", caption="Futuristic Surgical Solutions")
 
-# Surgical Training Page
-elif page == "Surgical Training":
-    st.markdown('<p class="subtitle">Surgical Training</p>', unsafe_allow_html=True)
-    st.write("Explore a wide range of surgical scenarios designed for every skill level.")
-    # Scenario Selector
-    scenario = st.selectbox("Choose a Training Scenario", ["Basic Suturing", "Appendectomy", "Cardiac Bypass", "Liver Transplant"])
-    st.write(f"Selected Scenario: **{scenario}**")
-    # Slider for Difficulty Level
-    difficulty = st.slider("Select Difficulty Level", 1, 5, 3)
-    st.write(f"Difficulty Level: **{difficulty}**")
-    # Feedback Button
-    if st.button("Start Training"):
-        with st.spinner("Loading the training simulation..."):
+# Training Page
+elif page == "Training":
+    st.title("Surgical Training")
+    st.write("Interactive simulations for skill enhancement.")
+    procedure = st.selectbox("Select a Procedure", ["Appendectomy", "Cardiac Bypass", "Liver Transplant"])
+    difficulty = st.slider("Select Difficulty", 1, 5, 3)
+    if st.button("Start Simulation"):
+        with st.spinner(f"Loading {procedure} - Level {difficulty}..."):
             time.sleep(2)
-        st.success("Training Simulation Ready!")
-        st.image("https://via.placeholder.com/800x400?text=Interactive+Simulation", caption=f"{scenario} - Level {difficulty}")
+        st.success(f"Simulation for {procedure} at Level {difficulty} Ready!")
+        st.image("https://via.placeholder.com/800x400?text=Simulation+Running")
 
 # Preoperative Planning Page
 elif page == "Preoperative Planning":
-    st.markdown('<p class="subtitle">Preoperative Planning</p>', unsafe_allow_html=True)
-    st.write("Upload patient imaging data and create a detailed preoperative plan.")
-    # File Upload
-    uploaded_file = st.file_uploader("Upload Patient Imaging File (CT/MRI)", type=["jpg", "png", "dcm"])
+    st.title("Preoperative Planning")
+    st.write("Upload imaging data and generate a 3D plan.")
+    uploaded_file = st.file_uploader("Upload CT/MRI File", type=["jpg", "png", "dcm"])
     if uploaded_file:
-        st.image(uploaded_file, caption="Uploaded Imaging", use_column_width=True)
-        st.write("Processing the imaging data...")
-        with st.spinner("Analyzing..."):
-            time.sleep(3)
-        st.success("3D Model Generated!")
-        st.image("https://via.placeholder.com/800x400?text=Generated+3D+Model", caption="Patient-Specific 3D Model")
+        st.image(uploaded_file, caption="Uploaded File", use_column_width=True)
+        st.write("Processing file...")
+        with st.spinner("Generating 3D Model..."):
+            result = generate_3d_model(uploaded_file)
+        st.success(result)
+
+# Patient Data Page
+elif page == "Patient Data":
+    st.title("Patient Data Management")
+    st.write("Secure storage using blockchain technology.")
+    patient_name = st.text_input("Patient Name")
+    patient_info = st.text_area("Patient Details (e.g., history, conditions)")
+    if st.button("Store Data"):
+        if patient_name and patient_info:
+            patient_hash = hash_data(patient_name + patient_info)
+            st.write("Patient Data Stored Securely.")
+            st.code(f"Patient Hash: {patient_hash}")
+        else:
+            st.warning("Please fill in all fields.")
 
 # About Page
 elif page == "About":
-    st.markdown('<p class="subtitle">About SurgiSim XR</p>', unsafe_allow_html=True)
+    st.title("About This Platform")
     st.write("""
-    SurgiSim XR was developed to revolutionize how surgeons and medical students approach learning and patient care. By 
-    integrating AI, mixed reality, and real-world data, the platform aims to improve surgical precision, reduce risks, 
-    and democratize access to advanced training tools.
+    This platform integrates AI, blockchain, and mixed reality to revolutionize surgical training and planning.
     """)
+    st.image("https://via.placeholder.com/800x400?text=About+Surgical+Assistant")
 
 # Footer
-st.markdown('<p class="footer">© 2025 SurgiSim XR. All Rights Reserved.</p>', unsafe_allow_html=True)
+st.write("---")
+st.markdown("<center>© 2025 Surgical Assistant. All Rights Reserved.</center>", unsafe_allow_html=True)
